@@ -93,8 +93,11 @@ fun ImportNoteBackupPreference(
                         logger.info("${LogTags.FILE_IO} Notes backup imported.")
 
                         when (val file = result.file) {
-                            is NotesBackupFile.V1.Plain -> {
-                                val notes = file.notes.map { it.toNoteData() }
+                            is NotesBackupFile.V1.Plain, is NotesBackupFile.V2.Plain -> {
+                                val notes = when (val plain = file) {
+                                    is NotesBackupFile.V1.Plain -> plain.notes
+                                    else -> (file as NotesBackupFile.V2.Plain).notes
+                                }.map { it.toNoteData() }
 
                                 noteRepository.apply {
                                     deleteAll()
@@ -136,22 +139,22 @@ fun ImportNoteBackupPreference(
     if (openDialog) {
         ConfirmationDialog(
             onConfirm = {
-                when (val file = importedNotesBackupFile) {
-                    is NotesBackupFile.V1.Aes256Encrypted -> {
-                        val password = passwordTextState.text
-                        val key = generateAes256Key(password.toString(), file.salt)
+                when (val backupFile = importedNotesBackupFile as NotesBackupFile.Decryptable?) {
+                    null -> {}
 
-                        when (val plain = file.decrypted(key, logger)) {
+                    else -> {
+                        val password = passwordTextState.text
+                        val key = generateAes256Key(password.toString(), backupFile.salt)
+
+                        when (val notes = backupFile.decryptedNotes(key, logger)) {
                             null -> {
                                 isPasswordCorrect = false
                             }
 
                             else -> {
-                                val notes = plain.notes.map { it.toNoteData() }
-
                                 noteRepository.apply {
                                     deleteAll()
-                                    addAll(notes)
+                                    addAll(notes.map { it.toNoteData() })
                                 }
                                 openDialog = false
                                 importedNotesBackupFile = null
@@ -165,8 +168,6 @@ fun ImportNoteBackupPreference(
                             }
                         }
                     }
-
-                    else -> {}
                 }
             },
             onDismiss = {

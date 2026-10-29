@@ -108,7 +108,7 @@ fun ExportNoteBackupPreference(
             val salt = randomByteArray(32)
             val iv = IvParameterSpec(randomByteArray(16))
             val password = passwordTextState.text
-            val file = NotesBackupFile.V1.Plain(
+            val file = NotesBackupFile.V2.Plain(
                 notes = noteRepository.getAll().map { it.toNote() }
             ).let {
                 when (exportEncryptionType) {

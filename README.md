@@ -20,6 +20,8 @@ Minimum Android version: 5.0 (Lollipop, API level 21)
 ## Features
 
 * Day screen - used to add, edit or delete note and set a reminder for it.
+  * Multiple notes per day are supported; each note can have its own optional time of day.
+* Quick add screen - type a note the way you'd say it ("Movie tomorrow at 11", "Gym every tuesday and friday at 9") and get notes on your calendar. Based on the parser of [SayWhen](https://github.com/dmi3dmi3/saywhen) (GPL-3.0).
 * Month screen and week screen
   * Days that constain a note are marked with a ring.
   * The currently selected day is marked with a solid circle.

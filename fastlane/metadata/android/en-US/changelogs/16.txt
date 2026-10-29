@@ -1,0 +1,2 @@
+- Support multiple notes per day: add as many notes as you want to a single day, each with its own optional time of day and reminder.
+- New "Quick add" tab: type a note the way you'd say it — "Movie tomorrow at 11", "Gym every tuesday and friday at 9" — and get notes on your calendar (English, Russian, Italian, Spanish, German, French supported).

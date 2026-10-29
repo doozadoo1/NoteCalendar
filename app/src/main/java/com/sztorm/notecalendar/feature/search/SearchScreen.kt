@@ -356,7 +356,9 @@ private fun ColumnScope.SearchResults(
                 ) {
                     items(
                         items = uiState.results.mapIndexed { i, note -> i to note },
-                        key = { (_, result) -> result.note.date }
+                        key = { (_, result) ->
+                            "${result.note.date}|${result.note.time}|${result.note.text.hashCode()}"
+                        }
                     ) { (index, result) ->
                         SearchResultRow(
                             index = index,

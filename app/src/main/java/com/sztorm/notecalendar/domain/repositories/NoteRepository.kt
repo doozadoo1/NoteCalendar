@@ -11,6 +11,9 @@ interface NoteRepository {
     fun delete(note: NoteData)
     fun deleteAll(): Int
     fun getAll(): List<NoteData>
+    fun getAllBy(date: LocalDate): List<NoteData>
+
+    /** Returns a first note of the given date or null. Notes are ordered by time. */
     fun getBy(date: LocalDate): NoteData?
     fun getBy(yearMonth: YearMonth): List<NoteData>
 }

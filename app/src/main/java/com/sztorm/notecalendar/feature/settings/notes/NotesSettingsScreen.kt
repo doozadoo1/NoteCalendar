@@ -32,6 +32,7 @@ import com.sztorm.notecalendar.ui.components.preferences.ConfirmationPreference
 import com.sztorm.notecalendar.ui.components.preferences.SizeSliderPreference
 import com.sztorm.notecalendar.ui.components.preferences.SubpreferenceScreen
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -107,7 +108,9 @@ fun NotesSettingsScreen(
                     logger.info("${LogTags.APPLICATION} Delete all notes confirmed.")
                     noteRepository.getAll().forEach { noteData ->
                         noteData.date.toLocalDateOrNull()?.let {
-                            notificationManager.cancelScheduledNotification(it)
+                            notificationManager.cancelScheduledNotification(
+                                it, noteData.noteTime.ifEmpty { null }?.let(LocalTime::parse)
+                            )
                         }
                     }
                     noteRepository.deleteAll()

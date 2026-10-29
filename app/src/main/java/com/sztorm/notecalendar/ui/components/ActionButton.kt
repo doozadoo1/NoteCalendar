@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 fun ActionButton(
     modifier: Modifier = Modifier,
     visible: Boolean = true,
+    enabled: Boolean = true,
     onClick: () -> Unit,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme
@@ -30,10 +31,17 @@ fun ActionButton(
     enter = scaleIn() + expandIn(),
     exit = shrinkOut() + scaleOut()
 ) {
+    // Material3 FloatingActionButton has no enabled parameter; emulate the disabled
+    // state by dimming the colors and ignoring clicks.
+    val resolvedContainerColor =
+        if (enabled) containerColor else containerColor.copy(alpha = 0.38f)
+    val resolvedContentColor =
+        if (enabled) contentColor else contentColor.copy(alpha = 0.38f)
+
     FloatingActionButton(
-        onClick = onClick,
-        containerColor = containerColor,
-        contentColor = contentColor,
+        onClick = { if (enabled) onClick() },
+        containerColor = resolvedContainerColor,
+        contentColor = resolvedContentColor,
         modifier = modifier.padding(8.dp)
     ) {
         content()

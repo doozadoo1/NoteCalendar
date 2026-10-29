@@ -30,4 +30,7 @@ sealed class Screen {
 
     @Serializable
     data object Search : Screen()
+
+    @Serializable
+    data object QuickAdd : Screen()
 }

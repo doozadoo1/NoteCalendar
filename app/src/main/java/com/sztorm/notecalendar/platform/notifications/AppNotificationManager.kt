@@ -22,6 +22,7 @@ import com.sztorm.notecalendar.platform.permissions.AppPermissionManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
 import java.util.Calendar
 
 class AppNotificationManager(val mainActivity: MainActivity, val logger: AppLogger) {
@@ -51,7 +52,7 @@ class AppNotificationManager(val mainActivity: MainActivity, val logger: AppLogg
             .putExtra(NotificationIntentKeys.EXTRA_NOTE_DATE, note.date.toString())
         val activity = PendingIntent.getActivity(
             mainActivity,
-            note.date.stableHash(),
+            notificationId(note.date, note.time),
             intent,
             getIntentUpdateCurrentFlags()
         )
@@ -73,7 +74,7 @@ class AppNotificationManager(val mainActivity: MainActivity, val logger: AppLogg
 
     private fun scheduleNotification(note: ReminderNote) {
         val dateTime = note.reminderDateTime
-        val id = note.date.stableHash()
+        val id = notificationId(note.date, note.time)
         val notification = createNotification(note)
         val notificationIntent =
             Intent(mainActivity, NoteNotificationReceiver::class.java)
@@ -133,25 +134,40 @@ class AppNotificationManager(val mainActivity: MainActivity, val logger: AppLogg
         }
     }
 
-    fun cancelScheduledNotification(noteDate: LocalDate) {
+    fun cancelScheduledNotification(noteDate: LocalDate, noteTime: LocalTime? = null) {
         val notificationIntent = Intent(
             mainActivity, NoteNotificationReceiver::class.java
         )
-        val pendingIntent: PendingIntent = PendingIntent.getBroadcast(
-            mainActivity,
-            noteDate.stableHash(),
-            notificationIntent,
-            getIntentCancelCurrentFlags()
-        )
-        val alarmManager = mainActivity
-            .getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.cancel(pendingIntent)
+        // Notes before version 2.2.0 always had a single note per day keyed by date;
+        // cancel that legacy alarm too so it cannot fire orphaned after an update.
+        val requestIds =
+            if (noteTime == null) listOf(noteDate.stableHash())
+            else listOf(notificationId(noteDate, noteTime), noteDate.stableHash())
 
-        logger.info("${LogTags.NOTIFICATIONS} Cancelled notification at $noteDate")
+        requestIds.forEach { id ->
+            val pendingIntent: PendingIntent = PendingIntent.getBroadcast(
+                mainActivity,
+                id,
+                notificationIntent,
+                getIntentCancelCurrentFlags()
+            )
+            val alarmManager = mainActivity
+                .getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.cancel(pendingIntent)
+        }
+
+        logger.info("${LogTags.NOTIFICATIONS} Cancelled notification at $noteDate $noteTime")
     }
 
     companion object {
         private const val NOTIFICATION_CHANNEL_ID_NAME = "note-notification-channel"
+
+        /**
+         * Stable request code for a single note's reminder. Multiple reminders can be
+         * scheduled on the same day, so times must be part of the identity.
+         */
+        private fun notificationId(date: LocalDate, time: LocalTime?): Int =
+            "${date}|${time ?: ""}".hashCode()
 
         private fun getIntentUpdateCurrentFlags(): Int {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

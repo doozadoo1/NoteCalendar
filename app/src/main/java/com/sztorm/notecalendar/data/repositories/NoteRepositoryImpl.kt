@@ -2,6 +2,7 @@ package com.sztorm.notecalendar.data.repositories
 
 import com.orm.SugarRecord
 import com.orm.SugarContext
+import com.sztorm.notecalendar.data.sortedForDay
 import com.sztorm.notecalendar.core.logging.AppLogger
 import com.sztorm.notecalendar.core.logging.LogTags.NOTE_REPOSITORY
 import com.sztorm.notecalendar.data.models.NoteData
@@ -50,13 +51,20 @@ class NoteRepositoryImpl(val logger: AppLogger) : NoteRepository {
         return result
     }
 
-    override fun getBy(date: LocalDate): NoteData? {
+    override fun getAllBy(date: LocalDate): List<NoteData> {
         val result = SugarRecord
             .find(
                 NoteData::class.java,
                 "date = ?", date.toString()
             )
-            .firstOrNull()
+            .sortedForDay()
+        logger.info("$NOTE_REPOSITORY got notes of $date (${result.size})")
+
+        return result
+    }
+
+    override fun getBy(date: LocalDate): NoteData? {
+        val result = getAllBy(date).firstOrNull()
         val msg = if (result == null) "did not get" else "got"
         logger.info("$NOTE_REPOSITORY $msg note of $date")
 

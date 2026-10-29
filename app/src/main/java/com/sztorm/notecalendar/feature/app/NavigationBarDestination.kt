@@ -7,6 +7,7 @@ enum class NavigationBarDestination {
     Month,
     Week,
     Day,
+    QuickAdd,
     Settings
 }
 
@@ -14,6 +15,7 @@ fun Screen.toNavigationBarDestination() = when (this) {
     is Screen.Month -> NavigationBarDestination.Month
     is Screen.Week -> NavigationBarDestination.Week
     is Screen.Day -> NavigationBarDestination.Day
+    is Screen.QuickAdd -> NavigationBarDestination.QuickAdd
     is Screen.Search -> null
     else -> NavigationBarDestination.Settings
 }
@@ -22,6 +24,7 @@ fun NavDestination.toNavigationBarDestination() = when {
     hasRoute<Screen.Month>() -> NavigationBarDestination.Month
     hasRoute<Screen.Week>() -> NavigationBarDestination.Week
     hasRoute<Screen.Day>() -> NavigationBarDestination.Day
+    hasRoute<Screen.QuickAdd>() -> NavigationBarDestination.QuickAdd
     hasRoute<Screen.Search>() -> null
     else -> NavigationBarDestination.Settings
 }

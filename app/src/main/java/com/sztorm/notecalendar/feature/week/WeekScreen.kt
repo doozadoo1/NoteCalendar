@@ -201,7 +201,7 @@ fun WeekScreen(
     val today = LocalDate.now()
     val isSelected = { date: LocalDate -> date == dayScreenDate }
     val isToday = { date: LocalDate -> date == today }
-    val hasNote = { date: LocalDate -> noteRepository.getBy(date) != null }
+    val hasNote = { date: LocalDate -> noteRepository.getAllBy(date).isNotEmpty() }
     val days = remember {
         val startDate: LocalDate = dayScreenDate.minusDays(1)
 

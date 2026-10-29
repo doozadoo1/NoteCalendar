@@ -26,7 +26,7 @@ class MonthNotesCacheTests {
     @ParameterizedTest
     @MethodSource("getByDateArgs")
     fun getByReturnsCorrectValue(
-        expected: NoteData?, cache: MonthNotesCache, date: LocalDate
+        expected: List<NoteData>, cache: MonthNotesCache, date: LocalDate
     ) = assertEquals(expected, cache.getBy(date))
 
     @ParameterizedTest
@@ -41,7 +41,9 @@ class MonthNotesCacheTests {
         assertEquals(expectedNotes.size, actual.notesCount)
 
         for (expectedNote in expectedNotes) {
-            assertEquals(expectedNote, actual.getBy(LocalDate.parse(expectedNote.date)))
+            assertEquals(
+                listOf(expectedNote), actual.getBy(LocalDate.parse(expectedNote.date))
+            )
         }
     }
 
@@ -57,7 +59,9 @@ class MonthNotesCacheTests {
         assertEquals(expectedNotes.size, actual.notesCount)
 
         for (expectedNote in expectedNotes) {
-            assertEquals(expectedNote, actual.getBy(LocalDate.parse(expectedNote.date)))
+            assertEquals(
+                listOf(expectedNote), actual.getBy(LocalDate.parse(expectedNote.date))
+            )
         }
     }
 
@@ -100,27 +104,27 @@ class MonthNotesCacheTests {
         @JvmStatic
         fun getByDateArgs() = listOf(
             Arguments.of(
-                NoteData(date = LocalDate.of(2025, 7, 20).toString(), text = "abc1"),
+                listOf(NoteData(date = LocalDate.of(2025, 7, 20).toString(), text = "abc1")),
                 MonthNotesCache(fakeRepository, YearMonth.of(2025, 9)),
                 LocalDate.of(2025, 7, 20)
             ),
             Arguments.of(
-                NoteData(date = LocalDate.of(2025, 10, 28).toString(), text = "abc6"),
+                listOf(NoteData(date = LocalDate.of(2025, 10, 28).toString(), text = "abc6")),
                 MonthNotesCache(fakeRepository, YearMonth.of(2025, 9)),
                 LocalDate.of(2025, 10, 28)
             ),
             Arguments.of(
-                NoteData(date = LocalDate.of(2026, 2, 23).toString(), text = "abc10"),
+                listOf(NoteData(date = LocalDate.of(2026, 2, 23).toString(), text = "abc10")),
                 MonthNotesCache(fakeRepository, YearMonth.of(2025, 12)),
                 LocalDate.of(2026, 2, 23)
             ),
             Arguments.of(
-                null,
+                emptyList<NoteData>(),
                 MonthNotesCache(fakeRepository, YearMonth.of(2025, 9)),
                 LocalDate.of(2025, 10, 27)
             ),
             Arguments.of(
-                null,
+                emptyList<NoteData>(),
                 MonthNotesCache(fakeRepository, YearMonth.of(2025, 9)),
                 LocalDate.of(2025, 12, 24)
             ),

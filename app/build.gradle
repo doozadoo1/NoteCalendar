@@ -14,8 +14,8 @@ android {
         compileSdk = 36
         minSdkVersion 21
         targetSdkVersion 36
-        versionCode 15
-        versionName "2.1.0"
+        versionCode 16
+        versionName "2.2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -76,6 +76,7 @@ dependencies {
     implementation 'com.nulab-inc:zxcvbn:1.9.0'
     implementation 'com.github.satyan:sugar:1.5'
     implementation 'com.github.Sztorm.MathKit:MathKit:2.0.0'
+    implementation project(':parser')
     implementation 'com.jakewharton.timber:timber:5.0.1'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.13.4'

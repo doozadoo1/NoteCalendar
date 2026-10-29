@@ -133,7 +133,7 @@ fun MonthScreen(
                             isSelected = appViewModel.state.dayScreenDate == date,
                             isToday = date == today,
                             isInCurrentMonth = date.month == yearMonth.month,
-                            hasNote = viewModel.state.notesCache.getBy(date) != null
+                            hasNote = viewModel.state.notesCache.getBy(date).isNotEmpty()
                         )
                     )
                 }

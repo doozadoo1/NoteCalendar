@@ -43,6 +43,7 @@ import com.sztorm.notecalendar.domain.repositories.NoteRepository
 import com.sztorm.notecalendar.domain.repositories.PreferenceRepository
 import com.sztorm.notecalendar.feature.day.DayScreen
 import com.sztorm.notecalendar.feature.month.MonthScreen
+import com.sztorm.notecalendar.feature.quickadd.QuickAddScreen
 import com.sztorm.notecalendar.feature.search.SearchScreen
 import com.sztorm.notecalendar.feature.settings.SettingsScreen
 import com.sztorm.notecalendar.feature.settings.about.AboutSettingsScreen
@@ -81,6 +82,11 @@ private fun NavigationBar(
             screen = Screen.Day(),
             icon = ImageVector.vectorResource(R.drawable.icon_outline_rounded_day),
             description = stringResource(R.string.Day)
+        ),
+        MainTab(
+            screen = Screen.QuickAdd,
+            icon = ImageVector.vectorResource(R.drawable.icon_outline_rounded_note_stack),
+            description = stringResource(R.string.QuickAdd)
         ),
         MainTab(
             screen = Screen.Settings,
@@ -180,6 +186,15 @@ private fun NavGraphBuilder.appNavGraph(
             notificationManager = notificationManager,
             noteRepository = noteRepository,
             isCreateOrEditRequested = route.isCreateOrEditRequested
+        )
+    }
+    composable<Screen.QuickAdd> {
+        QuickAddScreen(
+            logger = logger,
+            appViewModel = viewModel,
+            noteRepository = noteRepository,
+            permissionManager = permissionManager,
+            notificationManager = notificationManager
         )
     }
     composable<Screen.Settings> {

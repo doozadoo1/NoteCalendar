@@ -1,6 +1,8 @@
 package com.sztorm.notecalendar.data
 
+import com.orm.SugarRecord
 import com.sztorm.notecalendar.core.common.yearMonth
+import com.sztorm.notecalendar.data.sortedForDay
 import com.sztorm.notecalendar.data.models.NoteData
 import com.sztorm.notecalendar.domain.repositories.NoteRepository
 import java.time.LocalDate
@@ -32,7 +34,7 @@ class MonthNotesCache {
         }
     }
 
-    fun getBy(date: LocalDate): NoteData? {
+    fun getBy(date: LocalDate): List<NoteData> {
         val dateYearMonth = date.yearMonth
         val yearMonthMinus2 = yearMonth.minusMonths(2)
         val yearMonthPlus2 = yearMonth.plusMonths(2)
@@ -40,10 +42,10 @@ class MonthNotesCache {
         return when (dateYearMonth) {
             in yearMonthMinus2..yearMonthPlus2 -> {
                 val index = (dateYearMonth.monthValue - yearMonthMinus2.monthValue + 12) % 12
-                cache[index].find { it.date == date.toString() }
+                cache[index].filter { it.date == date.toString() }.sortedForDay()
             }
 
-            else -> null
+            else -> emptyList()
         }
     }
 
